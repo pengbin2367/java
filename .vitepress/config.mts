@@ -3,6 +3,7 @@ import { defineConfig } from "vitepress";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Java",
+  base: "/java/",
   description: "A VitePress Site",
   lastUpdated: true,
   themeConfig: {
