@@ -48,6 +48,10 @@ export default defineConfig({
               text: "集合面试题",
               link: "/basic/collection/CollectionInterviewQuestions",
             },
+            {
+              text: "JavaSE面试题",
+              link: "/basic/javase/JavaSEInterviewQuestions",
+            },
           ],
         },
       ],
