@@ -21,6 +21,15 @@ export default defineConfig({
         ],
       },
       {
+        text: "并发编程",
+        items: [
+          {
+            text: "JUC",
+            link: "/juc/JUCInterviewQuestions",
+          },
+        ],
+      },
+      {
         text: "项目实战",
         items: [
           {
@@ -51,6 +60,17 @@ export default defineConfig({
             {
               text: "JavaSE面试题",
               link: "/basic/javase/JavaSEInterviewQuestions",
+            },
+          ],
+        },
+      ],
+      "/juc/": [
+        {
+          text: "并发编程",
+          items: [
+            {
+              text: "JUC面试题",
+              link: "/juc/JUCInterviewQuestions",
             },
           ],
         },
