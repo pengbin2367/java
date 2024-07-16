@@ -1,0 +1,47 @@
+name: GitHub Actions Build and Deploy
+
+on: 
+  push:
+    branches: master
+
+  # 允许你从 Actions 选项卡手动运行此工作流程
+  workflow_dispatch:
+
+jobs:
+  # 构建工作
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 如果未启用 lastUpdated，则不需要
+      # - uses: pnpm/action-setup@v3 # 如果使用 pnpm，请取消注释
+      # - uses: oven-sh/setup-bun@v1 # 如果使用 Bun，请取消注释
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm # 或 pnpm / yarn
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Install dependencies
+        run: npm ci # 或 pnpm install / yarn install / bun install
+      - name: Build with VitePress
+        run: npm run docs:build # 或 pnpm docs:build / yarn docs:build / bun run docs:build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .vitepress/dist
+      # 部署到GitHub Pages - 也就是将打包内容发布到GitHub Pages
+      - name: Deploy
+        # 使用别人写好的 actions去部署（将打包文件部署到指定分支上）
+        uses: JamesIves/github-pages-deploy-action@v4
+        # 自定义环境变量
+        with:
+          # 指定仓库：你要发布的仓库路径名
+          repository-name: pengbin2367/java
+          # 部署到 deploy-pages 分支，也就是部署后提交到那个分支
+          branch: gh-pages
+          # 填写打包好的目录名称路径，本项目配置在根目录
+          folder: .vitepress/dist
