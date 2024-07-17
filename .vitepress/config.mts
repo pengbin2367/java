@@ -22,6 +22,15 @@ export default defineConfig({
         ],
       },
       {
+        text: "数据库",
+        items: [
+          {
+            text: "MySQL",
+            link: "/mysql/MySQLInterviewQuestions",
+          },
+        ],
+      },
+      {
         text: "并发编程",
         items: [
           {
@@ -61,6 +70,17 @@ export default defineConfig({
             {
               text: "JavaSE面试题",
               link: "/basic/javase/JavaSEInterviewQuestions",
+            },
+          ],
+        },
+      ],
+      "/mysql/": [
+        {
+          text: "MySQL",
+          items: [
+            {
+              text: "MySQL面试题",
+              link: "/mysql/MySQLInterviewQuestions",
             },
           ],
         },
