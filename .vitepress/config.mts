@@ -28,6 +28,10 @@ export default defineConfig({
             text: "MySQL",
             link: "/mysql/MySQLInterviewQuestions",
           },
+          {
+            text: "Redis",
+            link: "/redis/RedisInterviewQuestions",
+          },
         ],
       },
       {
@@ -85,6 +89,17 @@ export default defineConfig({
           ],
         },
       ],
+      "/redis/": [
+        {
+          text: "Redis",
+          items: [
+            {
+              text: "Redis面试题",
+              link: "/redis/RedisInterviewQuestions",
+            },
+          ],
+        },
+      ],
       "/juc/": [
         {
           text: "并发编程",
@@ -103,6 +118,19 @@ export default defineConfig({
             { text: "准备工作", link: "/projects/tingshu/01-GettingStart" },
             { text: "专辑管理", link: "/projects/tingshu/02-AlbumManagement" },
             { text: "声音管理", link: "/projects/tingshu/03-TrackManagement" },
+            { text: "用户登录", link: "/projects/tingshu/04-UserLogin" },
+            { text: "专辑搜索", link: "/projects/tingshu/05-AlbumSearch" },
+            { text: "专辑详情", link: "/projects/tingshu/06-AlbumDetails" },
+            { text: "缓存切面", link: "/projects/tingshu/07-CacheConfig" },
+            { text: "订单管理", link: "/projects/tingshu/08-OrderManagement" },
+            {
+              text: "账户管理",
+              link: "/projects/tingshu/09-AccountManagement",
+            },
+            { text: "微信支付", link: "/projects/tingshu/10-WxPayment" },
+            { text: "定时任务", link: "/projects/tingshu/11-ScheduleTask" },
+            { text: "RabbitMQ", link: "/projects/tingshu/12-RabbitMQJob" },
+            { text: "kafka", link: "/projects/tingshu/13-KafkaJob" },
           ],
         },
       ],

@@ -347,6 +347,8 @@ public void saveAlbumInfo(AlbumInfoVo albumInfoVo) {
   saveAlbumAttributeValue(albumInfoVo.getAlbumAttributeValueVoList(), albumId);
   // 初始化专辑统计信息
   initAlbumStat(albumId);
+  // 上架数据写入es
+  kafkaTemplate.send(KafkaConstant.QUEUE_ALBUM_UPPER, "专辑上架", albumId + "");
 }
 
 private void initAlbumStat(Long albumId) {
@@ -389,7 +391,7 @@ private void saveAlbumAttributeValue(List<AlbumAttributeValueVo> albumAttributeV
 
 ::: tip
 
-保存专辑并未完成，后面还需要将专辑信息保存到 ES 中，包括后续的删除、更新专辑操作，都需要同时对 ES 中的数据进行更新
+上架数据写入ES和下架的KafkaListener参见[专辑上下架](./13-KafkaJob#专辑上下架)
 
 :::
 
@@ -490,6 +492,7 @@ public void removeAlbumInfo(Long albumId) {
   if (delete <= 0) throw new GuiguException(201, "删除专辑标签失败");
   delete = albumStatMapper.delete(new LambdaQueryWrapper<AlbumStat>().eq(AlbumStat::getAlbumId, albumId));
   if (delete <= 0) throw new GuiguException(201, "删除专辑统计信息失败");
+  kafkaTemplate.send(KafkaConstant.QUEUE_ALBUM_LOWER, "专辑下架", albumId + "");
 }
 ```
 
@@ -547,6 +550,11 @@ public void updateAlbumInfo(Long albumId, AlbumInfoVo albumInfoVo) {
   int delete = albumAttributeValueMapper.delete(new LambdaQueryWrapper<AlbumAttributeValue>().eq(AlbumAttributeValue::getAlbumId, albumId));
   if (delete < 0) throw new GuiguException(201, "删除专辑标签失败");
   saveAlbumAttributeValue(albumInfoVo.getAlbumAttributeValueVoList(), albumId);
+  if (albumInfo.getIsOpen().equals("0")) {
+    kafkaTemplate.send(KafkaConstant.QUEUE_ALBUM_LOWER, "专辑下架", albumId + "");
+  } else {
+    kafkaTemplate.send(KafkaConstant.QUEUE_ALBUM_UPPER, "专辑上架", albumId + "");
+  }
 }
 ```
 
