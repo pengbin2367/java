@@ -1,18 +1,18 @@
 # 专辑搜索
 
-## 专辑数据从DB写入写出ES
+## 专辑数据从 DB 写入写出 ES
 
-专辑数据从DB写入写出ElasticSearch的过程，其实就是专辑上下架的实现。在这一过程中，需要写入ES的对象是**AlbumInfoIndex**，其中包含专辑的基础属性、一二三/级分类id、作者、专辑统计信息和标签信息。因此，要实现这一功能，先要从数据库获取以下信息：
+专辑数据从 DB 写入写出 ElasticSearch 的过程，其实就是专辑上下架的实现。在这一过程中，需要写入 ES 的对象是 **AlbumInfoIndex**，其中包含专辑的基础属性、一二三/级分类 id、作者、专辑统计信息和标签信息。因此，要实现这一功能，先要从数据库获取以下信息：
 
-1. 先从`album_info`中获取专辑的基础信息
-2. 根据`album_info`中获取的`user_id`从`user_info`中获取作者信息
-3. 根据`album_info`中获取的`id`从`base_category_view`中获取各级分类的id
-4. 根据`album_info`中获取的`id`从`album_stat`中获取专辑统计信息
-5. 根据`album_info`中获取的`id`从`album_attribute_value`中获取专辑标签信息
+1. 先从 `album_info` 中获取专辑的基础信息
+2. 根据 `album_info` 中获取的 `user_id` 从 `user_info` 中获取作者信息
+3. 根据 `album_info` 中获取的 `id` 从 `base_category_view` 中获取各级分类的 id
+4. 根据 `album_info` 中获取的 `id` 从 `album_stat` 中获取专辑统计信息
+5. 根据 `album_info` 中获取的 `id` 从 `album_attribute_value` 中获取专辑标签信息
 
 ### 查询专辑信息
 
-:::code-group
+::: code-group
 
 ```java [AlbumInfoFeignClient]
 @FeignClient(value = "service-album", path = "/client/album/albumInfo", contextId = "albumInfoFeignClient")
@@ -42,7 +42,7 @@ public class AlbumInfoClientController {
 
 ### 查询作者信息
 
-:::code-group
+::: code-group
 
 ```java [UserInfoFeignClient]
 @FeignClient(value = "service-user", path = "/client/user/userInfo", contextId = "userInfoFeignClient")
@@ -70,9 +70,9 @@ public class UserInfoClientController {
 
 :::
 
-### 查询各级分类id
+### 查询各级分类 id
 
-:::code-group
+::: code-group
 
 ```java [CategoryFeignClient]
 @FeignClient(value = "service-album", path = "/client/album/category", contextId = "categoryFeignClient")
@@ -102,7 +102,7 @@ public class BaseCategoryClientController {
 
 ### 查询专辑统计信息
 
-:::code-group
+::: code-group
 
 ```java [AlbumInfoClientController]
 @GetMapping("/getAlbumStatInfo/{albumId}")
@@ -126,7 +126,7 @@ public Map<String, Integer> getAlbumStatInfo(Long albumId) {
 
 ### 查询专辑标签信息
 
-:::code-group
+::: code-group
 
 ```java [AlbumInfoClientController]
 @GetMapping("/getAlbumAttributeValue/{albumId}")
@@ -146,7 +146,7 @@ public List<AlbumAttributeValue> getAlbumAttributeValue(Long albumId) {
 
 ### 实现上下架
 
-:::code-group
+::: code-group
 
 ```java [ItemServiceImpl]
 @Override
@@ -203,13 +203,13 @@ public void removeAlbumFromEs(Long albumId) {
 
 :::
 
-## 查询一级分类下排序最靠前的7个分类
+## 查询一级分类下排序最靠前的 7 个分类
 
 ![image-20240720100115692](05-AlbumSearch.assets/image-20240720100115692.png)
 
 在首页的轮播图下面，有当前一级分类下的排序最靠前的七个三级分类
 
-:::code-group
+::: code-group
 
 ```java [BaseCategoryApiController]
 @GetMapping("/findTopBaseCategory3/{category1Id}")
@@ -232,94 +232,9 @@ public List<BaseCategory3> findTopBaseCategory3(Long category1Id) {
 
 :::
 
-## 查询一级分类下全部信息
+## 查询一级分类下所有三级分类
 
-在首页的排序最靠前的七个三级分类后，还有一个全部按钮。点击后会显示当前一级分类的所有信息，实现思路类似与专辑管理中的[分类业务](./02-AlbumManagement#分类业务)：
-
-1. 根据一级分类Id 查询一级分类对象
-
-2. 根据一级分类Id查询当前一级分类Id 下对应的集合数据
-
-3. 根据二级分类Id进行分组获取二级分类对象
-
-4. 获取二级下对应的三级分类数据
-
-5. 将数据统一封装到一级分类对象中
-
-   格式如下：
-
-```json
-{
-	"categoryChild": [{
-		"categoryChild": [{
-			"categoryName": "催眠音乐",
-			"categoryId": 1001
-		}, {
-			"categoryName": "放松音乐",
-			"categoryId": 1002
-		}, {
-			"categoryName": "提神音乐",
-			"categoryId": 1003
-		}, {
-			"categoryName": "胎教音乐",
-			"categoryId": 1004
-		}, {
-			"categoryName": "运动音乐",
-			"categoryId": 1005
-		}, {
-			"categoryName": "休闲音乐",
-			"categoryId": 1006
-		}],
-		"categoryName": "音乐音效",
-		"categoryId": 101
-	}, {
-		"categoryChild": [{
-			"categoryName": "助眠引导",
-			"categoryId": 1007
-		}, {
-			"categoryName": "放松引导",
-			"categoryId": 1008
-		}, {
-			"categoryName": "专注引导",
-			"categoryId": 1009
-		}, {
-			"categoryName": "儿童入睡引导",
-			"categoryId": 1010
-		}, {
-			"categoryName": "其他",
-			"categoryId": 1011
-		}],
-		"categoryName": "课程引导",
-		"categoryId": 102
-	}, {
-		"categoryChild": [{
-			"categoryName": "经典音乐推荐",
-			"categoryId": 1012
-		}, {
-			"categoryName": "热歌盘点",
-			"categoryId": 1013
-		}, {
-			"categoryName": "歌曲翻唱",
-			"categoryId": 1014
-		}, {
-			"categoryName": "音乐教学",
-			"categoryId": 1015
-		}, {
-			"categoryName": "音乐故事",
-			"categoryId": 1016
-		}, {
-			"categoryName": "其他",
-			"categoryId": 1017
-		}],
-		"categoryName": "主播音乐节目",
-		"categoryId": 103
-	}],
-	"categoryName": "音乐",
-	"categoryId": 1
-}
-```
-
-:::code-group
+::: code-group
 
 ```java [BaseCategoryApiController]
 @GetMapping("/getBaseCategoryList/{category1Id}")
@@ -340,6 +255,310 @@ public List<BaseCategory3> getBaseCategoryListById(Long category1Id) {
 }
 ```
 
+:::
 
+## 查询首页分类和专辑数据
+
+![](05-AlbumSearch.assets/tingshu056.png)
+
+在首页的布局上，顶部是一个搜索框，往下是一排可左右滑动的一级分类，这里将其定义为“频道”。每个频道下有对应的数据，包括频道中最火的七个三级分类（上面已实现该接口）和这些三级分类对应的最火的专辑
+
+### 功能设计
+
+用户来到首页，点击不同频道，返回该频道下排序靠前的三级分类和该分类对应的专辑信息
+
+### 表结构设计
+
+理论上来说，我们需要先从 `base_category3` 中获取该一级分类对应的三级分类信息，然后在根据三级分类从 `album_info` 中获取对应的专辑信息。但在前面我们已经实现了把所有专辑数据存入 ES 的功能，那么我们就可以直接从 ES 中获取，而无需从数据库中查询，缓解数据库压力！
+
+综上说述，我们只需要根据 `category1Id` 从 `base_category3` 中查询对应的三级分类即可！
+
+### 代码实现
+
+::: code-group
+
+```java [SearchApiController]
+@GetMapping("/channel/{category1Id}")
+public Result channel(@PathVariable("category1Id") Long category1Id) {
+  return Result.ok(searchService.channel(category1Id));
+}
+```
+
+```java [SearchServiceImpl]
+@SneakyThrows
+@Override
+public Object channel(Long category1Id) {
+  // 根据一级分类获取前7个三级分类数据
+  List<BaseCategory3> category3List = categoryFeignClient.getBaseCategory3(category1Id);
+  Map<Long, BaseCategory3> category3Map = category3List.stream().collect(Collectors.toMap(
+    BaseEntity::getId,
+    value -> value
+  ));
+  List<FieldValue> termList = category3List.stream().map(
+    baseCategory3 -> new FieldValue.Builder().longValue(baseCategory3.getId()).build()
+  ).collect(Collectors.toList());
+  // 拼接条件
+  SearchRequest.Builder builder = new SearchRequest.Builder();
+  builder.index("albuminfo");
+  // 将这7个分类作为查询条件，类似MySQL的in
+  // 将满足的结果分桶，类似group by（每个三级分类只取前六条数据）
+  builder.aggregations("aggCategory3Id",
+                       fn -> fn.terms(t -> t.field("category3Id"))
+                       .aggregations("aggHotScore",
+                                     subFn -> subFn.topHits(top -> top.sort(
+                                       s -> s.field(f -> f.field("hotScore").order(SortOrder.Desc))
+                                     )))
+                      );
+  builder.query(query -> query.terms(
+    terms -> terms.field("category3Id").terms(fn -> fn.value(termList))
+  ));
+  // 查出结果
+  SearchResponse<AlbumInfoIndex> response = elasticsearchClient.search(builder.build(), AlbumInfoIndex.class);
+  Aggregate aggregate = response.aggregations().get("aggCategory3Id");
+  return aggregate.lterms().buckets().array().stream().map(buck -> {
+    JSONObject result = new JSONObject();
+    long category3Id = buck.key();
+    result.put("baseCategory3", category3Map.get(category3Id));
+    List<AlbumInfoIndex> albumInfoIndexList = buck.aggregations().get("aggHotScore").topHits().hits().hits().stream().map(
+      subBuk -> subBuk.source().to(AlbumInfoIndex.class))
+      .toList();
+    result.put("list", albumInfoIndexList);
+    return result;
+  });
+}
+```
+
+:::
+
+## 首页搜索
+
+![](05-AlbumSearch.assets/检索-关键字搜索-17055730237394.gif)
+
+### 基础搜索
+
+至此，我们已经把首页搜索框以下部分完成了，现在来看搜索框功能的实现。前端传入一个 **AlbumIndexQuery** 对象，后端根据这个对象，构建 ES 查询条件，从 ES 中取出符合条件的数据构建成一个 **AlbumSearchResponseVo** 对象返回给前端
+
+::: code-group
+
+```java [SearchApiController]
+@PostMapping
+public Result search(@RequestBody AlbumIndexQuery albumIndexQuery) {
+  return Result.ok(searchService.search(albumIndexQuery));
+}
+```
+
+```java [SearchServiceImpl]
+@SneakyThrows
+@Override
+public Object search(AlbumIndexQuery albumIndexQuery) {
+  // 先构建查询参数
+  SearchRequest request = buidQueryParams(albumIndexQuery);
+  // ES查询
+  SearchResponse<AlbumInfoIndex> response = elasticsearchClient.search(request, AlbumInfoIndex.class);
+  // 提取AlbumSearchResponseVo对象
+  AlbumSearchResponseVo searchResult = getSearchResult(response);
+  // 设置页码相关属性
+  searchResult.setPageNo(albumIndexQuery.getPageNo());
+  Integer pageSize = albumIndexQuery.getPageSize();
+  searchResult.setPageSize(pageSize);
+  Long total = searchResult.getTotal();
+  searchResult.setTotalPages(total % pageSize == 0 ? total / pageSize : total / pageSize + 1);
+  return searchResult;
+}
+
+private SearchRequest buidQueryParams(AlbumIndexQuery albumIndexQuery) {
+  SearchRequest.Builder builder = new SearchRequest.Builder();
+  // 设置索引
+  builder.index("albuminfo");
+
+  BoolQuery.Builder boolQuery = new BoolQuery.Builder();
+  // 获取关键词
+  String keyword = albumIndexQuery.getKeyword();
+  // 构建查询条件
+  if (StringUtils.isNotBlank(keyword)) {
+    boolQuery.should(s1 -> s1.match(m -> m.field("albumTitle").query(keyword)))
+      .should(s2 -> s2.match(m -> m.field("albumIntro").query(keyword)));
+  }
+  Long category1Id = albumIndexQuery.getCategory1Id();
+  if (category1Id != null) {
+    boolQuery.filter(f -> f.term(t -> t.field("category1Id").value(category1Id)));
+  }
+  Long category2Id = albumIndexQuery.getCategory2Id();
+  if (category2Id != null) {
+    boolQuery.filter(f -> f.term(t -> t.field("category2Id").value(category2Id)));
+  }
+  Long category3Id = albumIndexQuery.getCategory3Id();
+  if (category3Id != null) {
+    boolQuery.filter(f -> f.term(t -> t.field("category3Id").value(category3Id)));
+  }
+  List<String> attributeList = albumIndexQuery.getAttributeList();
+  if (attributeList != null && !attributeList.isEmpty()) {
+    attributeList.forEach(attribute -> {
+      String[] attrs = attribute.split(":");
+      boolQuery.filter(f -> f.nested(nested -> nested
+                                     .path("attributeValueIndexList")
+                                     .query(query -> query.bool(bool -> bool
+                                                                .must(m -> m.term(t -> t.field("attributeValueIndexList.attributeId").value(attrs[0])))
+                                                                .must(m -> m.term(t -> t.field("attributeValueIndexList.valueId").value(attrs[1])))))
+                                     .scoreMode(ChildScoreMode.None)
+                                    ));
+    });
+  }
+
+  builder.query(boolQuery.build()._toQuery());
+  // 设置分页属性
+  Integer pageNo = albumIndexQuery.getPageNo();
+  Integer pageSize = albumIndexQuery.getPageSize();
+  builder.from((pageNo - 1) * pageSize);
+  builder.size(pageSize);
+  // 设置排序
+  String order = albumIndexQuery.getOrder();
+  if (StringUtils.isNotEmpty(order)) {
+    String[] orders = order.split(":");
+    switch (orders[0]) {
+      case "1" -> builder.sort(sort -> sort.field(f -> f.field("hotScore").order(getSort(orders[1]))));
+      case "2" -> builder.sort(sort -> sort.field(f -> f.field("playStatNum").order(getSort(orders[1]))));
+      case "3" -> builder.sort(sort -> sort.field(f -> f.field("subscribeStatNum").order(getSort(orders[1]))));
+    }
+  }
+  // 高亮
+  builder.highlight(high -> high.fields("albumTitle", fn -> fn.preTags("<font style=color:red>").postTags("</font>")));
+  return builder.build();
+}
+
+private SortOrder getSort(String order) {
+  String lowerCase = order.toLowerCase();
+  if ("desc".equals(lowerCase)) {
+    return SortOrder.Desc;
+  } else if ("asc".equals(lowerCase)) {
+    return SortOrder.Asc;
+  } else {
+    return null;
+  }
+}
+
+private AlbumSearchResponseVo getSearchResult(SearchResponse<AlbumInfoIndex> response) {
+  AlbumSearchResponseVo result = new AlbumSearchResponseVo();
+  // 获取命中的数据
+  List<AlbumInfoIndexVo> albumInfoIndexList = response.hits().hits().stream().map(albumInfoIndexHit -> {
+    AlbumInfoIndexVo albumInfoIndexVo = new AlbumInfoIndexVo();
+    AlbumInfoIndex albumInfoIndex = albumInfoIndexHit.source();
+    Map<String, List<String>> highlight = albumInfoIndexHit.highlight();
+    if (highlight != null && !highlight.isEmpty()) {
+      List<String> albumTitleList = highlight.get("albumTitle");
+      if (albumTitleList != null && !albumTitleList.isEmpty()) {
+        String title = "";
+        for (String albumTitle : albumTitleList) {
+          title += albumTitle;
+        }
+        albumInfoIndex.setAlbumTitle(title);
+      }
+    }
+    BeanUtils.copyProperties(albumInfoIndex, albumInfoIndexVo);
+    return albumInfoIndexVo;
+  }).toList();
+  result.setList(albumInfoIndexList);
+  result.setTotal(response.hits().total() != null ? response.hits().total().value() : 0);
+  return result;
+}
+```
+
+:::
+
+### 自动补全
+
+搜索的基本功能有了，接下来实现一个搜索的附加功能——自动补全：
+
+![](05-AlbumSearch.assets/检索-关键字自动补全.gif)
+
+这里的自动补全原理很简单：在将数据存入 ES 的时候，也存入一些附加的自动补全信息，比如拼音首字母、拼音、关键字。那么这里只针对专辑名称、作者姓名和专辑简介三个字段进行自动补全，首先要做的就是在添加专辑信息到 ES 时，将这个三个字段的附加的自动补全信息也添加进去：
+
+::: code-group
+
+```java [ItemServiceImpl]
+@Override
+public void addAlbumFromDbToEs(Long albumId) {
+  AlbumInfo albumInfo = albumInfoFeignClient.getAlbumInfo(albumId);
+  if (albumInfo == null) {
+    throw new GuiguException(201, "专辑不存在");
+  }
+  ...
+  albumInfoIndex.setAttributeValueIndexList(attributeValueIndexList);
+  albumInfoIndexDao.save(albumInfoIndex);
+  // 存储搜索提示词 // [!code ++]
+  saveSuggestInfo(albumInfoIndex.getAlbumTitle()); // [!code ++]
+  saveSuggestInfo(albumInfoIndex.getAlbumIntro()); // [!code ++]
+  saveSuggestInfo(albumInfoIndex.getAnnouncerName()); // [!code ++]
+}
+
+private void saveSuggestInfo(String title) { // [!code ++]
+  try { // [!code ++]
+    SuggestIndex suggestIndex = new SuggestIndex(); // [!code ++]
+    suggestIndex.setId(UUID.randomUUID().toString().replaceAll("-", "")); // [!code ++]
+    suggestIndex.setTitle(title); // [!code ++]
+    suggestIndex.setKeyword(new Completion(new String[]{title})); // [!code ++]
+    suggestIndex.setKeywordPinyin(new Completion(new String[]{PinYinUtils.toHanyuPinyin(title)})); // [!code ++]
+    suggestIndex.setKeywordSequence(new Completion(new String[]{PinYinUtils.getFirstLetter(title)})); // [!code ++]
+    suggestIndexDao.save(suggestIndex); // [!code ++]
+  } catch (Exception e) { // [!code ++]
+    e.printStackTrace(); // [!code ++]
+  } // [!code ++]
+} // [!code ++]
+```
+
+```java [SearchApiController]
+@GetMapping("/completeSuggest/{keywords}")
+public Result completeSuggest(@PathVariable(value = "keywords") String keywords) {
+  return Result.ok(searchService.completeSuggest(keywords));
+}
+```
+
+```java [SearchServiceImpl]
+@SneakyThrows
+@Override
+public Object completeSuggest(String keywords) {
+  SearchRequest.Builder builder = new SearchRequest.Builder();
+  builder.index("suggestinfo");
+  builder.suggest(s1 -> s1
+                  .suggesters("suggestKeyword", s2 -> s2
+                              .prefix(keywords)
+                              .completion(s3 -> s3.field("keyword")       // 指定匹配的域
+                                          .size(10)                           // 指定匹配的数量
+                                          .skipDuplicates(true)               // 是否去重
+                                          .fuzzy(s4 -> s4.fuzziness("auto"))  // 设置偏移量：2个
+                                         )
+                             )
+                  .suggesters("suggestKeywordPinyin", s2 -> s2
+                              .prefix(keywords)
+                              .completion(s3 -> s3.field("keywordPinyin")
+                                          .size(10)
+                                          .skipDuplicates(true)
+                                          .fuzzy(s4 -> s4.fuzziness("auto"))
+                                         )
+                             )
+                  .suggesters("suggestKeywordSequence", s2 -> s2
+                              .prefix(keywords)
+                              .completion(s3 -> s3.field("keywordSequence")
+                                          .size(10)
+                                          .skipDuplicates(true)
+                                          .fuzzy(s4 -> s4.fuzziness("auto"))
+                                         )
+                             )
+                 );
+  SearchResponse<SuggestIndex> response = elasticsearchClient.search(builder.build(), SuggestIndex.class);
+  List<String> suggestKeyword = getSuggestResult(response.suggest().get("suggestKeyword"));
+  List<String> suggestKeywordPinyin = getSuggestResult(response.suggest().get("suggestKeywordPinyin"));
+  List<String> suggestKeywordSequence = getSuggestResult(response.suggest().get("suggestKeywordSequence"));
+  return Stream.of(suggestKeyword, suggestKeywordPinyin, suggestKeywordSequence)
+    .filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toSet())
+    .stream().limit(10).collect(Collectors.toList());
+}
+
+private List<String> getSuggestResult(List<Suggestion<SuggestIndex>> suggestKeyword) {
+  return suggestKeyword.get(0).completion().options()
+    .stream().map(s -> s.source().getTitle())
+    .collect(Collectors.toList());
+}
+```
 
 :::
