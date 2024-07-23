@@ -75,4 +75,4 @@ public class AlbumUpOrDownConsumer {
 
 :::
 
-关于 `addAlbumFromDbToEs` 和 `removeAlbumFromEs` 的具体实现参考 `service-search` 模块的 [专辑上下架](./05-AlbumSearch#专辑上下架)
+关于 `addAlbumFromDbToEs` 和 `removeAlbumFromEs` 的具体实现参考 `service-search` 模块的 [专辑数据从 DB 写入写出 ES](./05-AlbumSearch#专辑数据从DB写入写出ES)
