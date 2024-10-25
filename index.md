@@ -20,6 +20,7 @@ features:
     link: /projects/tingshu/01-GettingStart
   - title: 设计模式
     details: 设计模式与框架源码，理论与实践的完美结合（规划中）
+    link: /design-patterns/01-dp/01-introduction-to-design-patterns
   - title: Feature C
     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 ---

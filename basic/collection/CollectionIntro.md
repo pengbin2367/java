@@ -4,7 +4,7 @@ Java 最初的版本只为最常用的数据结构提供了很少的一组类：
 
 随着 JavaSE1.2 的问世，设计人员感到是推出一组功能完善的数据结构的时机了。面对一大堆相互矛盾的设计策略，他们希望让类库规模小且易于学习，而不希望像 C++的“标准模板库”（即 STL）那样复杂，但却又希望能够得到 STL 率先推出的“泛型算法”所具有的优点。本节将介绍 Java 集合框架的基本设计，展示使用它们的方法，并解释一些颇具争议的特性背后的考虑。
 
-### 将集合的接口与实现分离
+## 将集合的接口与实现分离
 
 与现代的数据结构类库的常见情况一样，Java 集合类库也将接口（interface）与实现（implementation）分离。首先，看一下人们熟悉的数据结构——队列（queue）是如何分离的。
 
@@ -79,7 +79,7 @@ Queue<Customer> expressLane = new CircularArrayQueue();
 
 ![image-20211202182324676](CollectionIntro.assets/image-20211202182324676.png)
 
-### Collection 接口
+## Collection 接口
 
 在 Java 类库中，集合类的基本接口是 Collection 接口。这个接口有两个基本方法 add 和 iterator()。
 
@@ -89,7 +89,7 @@ add 用于向集合中添加元素。如果添加成功就返回 true，否则�
 
 iterator 用于返回一个实现了 Iterator 接口的对象。可以使用这个迭代器对象依次访问集合中的元素。
 
-### 迭代器
+## 迭代器
 
 Iterator 接口包含 4 个方法
 
@@ -149,7 +149,7 @@ it.next();
 it.remove(); // OK!
 ```
 
-### 泛型实用方法
+## 泛型实用方法
 
 由于 Collection 与 Iterator 都是泛型接口，可以编写操作任何集合类型的实用方法。例如，下面是一个检测任意结合是否包含指定元素的泛型方法：
 
@@ -172,11 +172,11 @@ Java 类库设计者认为：这些实用方法中的某些方法非常有用，
 
 ![image-20211202194307915](CollectionIntro.assets/image-20211202194307915.png)
 
-### 集合框架中的接口
+## 集合框架中的接口
 
 ![image-20211202195210125](CollectionIntro.assets/image-20211202195210125.png)
 
-### Collections 工具类
+## Collections 工具类
 
 > - Collections 是一个操作 Set、List 和 Map 等集合的工具类。
 > - Collections 中提供了一系列静态的方法对集合元素进行排序、查询和修改等操作，还提供了对集合对象设置不可变、对集合对象实现同步控制等方法
