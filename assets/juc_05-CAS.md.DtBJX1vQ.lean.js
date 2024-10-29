@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.BAO6c_AF.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"juc/05-CAS.md","filePath":"juc/05-CAS.md","lastUpdated":1729870203000}'),c={name:"juc/05-CAS.md"};function r(o,s,n,d,p,_){return a(),t("div")}const f=e(c,[["render",r]]);export{m as __pageData,f as default};
