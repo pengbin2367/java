@@ -24,7 +24,7 @@ public ListNode mergeKLists (ArrayList<ListNode> lists) {
 }
 ```
 
-[线段重合](	)
+[线段重合](https://www.nowcoder.com/questionTerminal/1ae8d0b6bb4e4bcdbf64ec491f63fc37)
 
 ```java
 import java.util.*;
