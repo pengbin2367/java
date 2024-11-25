@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.BBnPlPAH.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"juc/04-JMM.md","filePath":"juc/04-JMM.md","lastUpdated":1729870203000}'),c={name:"juc/04-JMM.md"};function r(o,s,n,d,p,_){return a(),t("div")}const f=e(c,[["render",r]]);export{m as __pageData,f as default};
